@@ -8,62 +8,13 @@
 #include "lib/LiquidCrystal_I2C.h"
 #include "WateringSystem.h"
 
-/*!
- * @defined
- * @abstract   IIC_ADDR_LCD
- * @discussion Address of LCD display on IIC channel
- */
-#define IIC_ADDR_LCD 0x3f
-
-/*!
- * @defined
- * @abstract   IIC_ADDR_RTC
- * @discussion Address of RTC module on IIC channel
- */
-#define IIC_ADDR_RTC 0x68
-
-/*!
- * @defined
- * @abstract   IIC_ADDR_EEPROM
- * @discussion Address of EEPROM datastore on IIC channel
- */
-#define IIC_ADDR_EEPROM 0x50
-
-/*!
- * @defined
- * @abstract   IIC_ADDR_RELAY
- * @discussion Address of relay block (MCP23017) on IIC channel
- */
-#define IIC_ADDR_RELAY 0x20
-
-/*!
- * @defined
- * @abstract   MAIN_CYCLE_DELAY
- * @discussion Delay time, wait before next cycle in main loop
- */
-#define MAIN_CYCLE_DELAY 250
-
-/*!
- * @defined
- * @abstract   EDIT_WAIT_CYCLE
- * @discussion At least as many cycles need to keep pressing the edit button to enter the setup
- */
-#define EDIT_WAIT_CYCLE 12
-
 int edit_cycles = 0;
 
-LiquidCrystal_I2C lcd(IIC_ADDR_LCD, 2, 1, 0, 4, 5, 6, 7);
+// Futasi objektumok
+LiquidCrystal_I2C lcd = LiquidCrystal_I2C(IIC_ADDR_LCD, 2, 1, 0, 4, 5, 6, 7);
+WateringSystem wSys = WateringSystem();
 
-WateringSystem wSys();
-
-
-void setup(){
-	// Objektum letrehozatal
-	lcd.begin(16,2);
-	Wire.begin();
-
-	// setDate(0, 30, 20, 6, 8, 9, 43);
-
+void startSystem(){
 	lcd.setBacklightPin(3,POSITIVE);
 	delay(100);
 	lcd.setBacklight(HIGH);
@@ -74,6 +25,16 @@ void setup(){
 	lcd.print("Watering System");
 	lcd.setCursor(0,1);
 	lcd.print("Start");
+}
+
+void setup(){
+	// Objektum letrehozatal
+	lcd.begin(16,2);
+	Wire.begin();
+
+	wSys.initManualSelector();
+	// setDate(0, 30, 20, 6, 8, 9, 43);
+	startSystem();
 	delay(1000);
 }
 
@@ -81,7 +42,7 @@ void loop(){
 	// Letrehozok nehany valtozot
 	// a datum es ido kijelzeshez
 	byte sec, min, hour, dow, dom, mon, year;
-	wSys.getDate( &sec, &min, &hour, &dow, &dom, &mon, &year);
+	wSys.getDate( &sec, &min, &hour, &dow, &dom, &mon, &year );
 
 	// A masodiksor elejere teszem a kurzort
 	lcd.setCursor(0,1);

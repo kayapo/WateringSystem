@@ -9,9 +9,74 @@
 // ---------------------------------------------------------------------------
 #ifndef WateringSystem_h
 #define WateringSystem_h
-#endif
 
 #include <inttypes.h>
+
+// CONSTANT  definitions
+// ---------------------------------------------------------------------------
+
+/*!
+ * @defined
+ * @abstract   IIC_ADDR_LCD
+ * @discussion Address of LCD display on IIC channel
+ */
+#define IIC_ADDR_LCD 0x3f
+
+/*!
+ * @defined
+ * @abstract   IIC_ADDR_RTC
+ * @discussion Address of RTC module on IIC channel
+ */
+#define IIC_ADDR_RTC 0x68
+
+/*!
+ * @defined
+ * @abstract   IIC_ADDR_EEPROM
+ * @discussion Address of EEPROM datastore on IIC channel
+ */
+#define IIC_ADDR_EEPROM 0x50
+
+/*!
+ * @defined
+ * @abstract   IIC_ADDR_RELAY
+ * @discussion Address of relay block (MCP23017) on IIC channel
+ */
+#define IIC_ADDR_RELAY 0x20
+
+/*!
+ * @defined
+ * @abstract   PUSH_BUTTON_PIN
+ * @discussion For this pin connected the rotary encoders push button
+ */
+#define PUSH_BUTTON_PIN 11
+
+/*!
+ * @defined
+ * @abstract   SCROLL_UP_PIN
+ * @discussion For this pin connected the rotary encoders rotate first direction
+ */
+#define SCROLL_UP_PIN 12
+
+/*!
+ * @defined
+ * @abstract   SCROLL_DOWN_PIN
+ * @discussion For this pin connected the rotary encoders rotate other direction
+ */
+#define SCROLL_DOWN_PIN 13
+
+/*!
+ * @defined
+ * @abstract   MAIN_CYCLE_DELAY
+ * @discussion Delay time, wait before next cycle in main loop
+ */
+#define MAIN_CYCLE_DELAY 250
+
+/*!
+ * @defined
+ * @abstract   EDIT_WAIT_CYCLE
+ * @discussion At least as many cycles need to keep pressing the edit button to enter the setup
+ */
+#define EDIT_WAIT_CYCLE 12
 
 class WateringSystem
 {
@@ -23,8 +88,21 @@ public:
 	 *
 	 * @param
 	 */
+
 	// Constructor without parameters
 	WateringSystem();
+
+	// Destructor
+	~WateringSystem();
+
+	/*!
+	 * @defined
+	 * @abstract
+	 * @discussion
+	 *
+	 * @param
+	 */
+	void initManualSelector();
 
 	/*!
 	 * @method
@@ -72,8 +150,6 @@ private:
 	 * @param
 	 */
 	uint8_t decToBcd( uint8_t dec );
-
-	// Destructor
-	~WateringSystem();
 };
 
+#endif

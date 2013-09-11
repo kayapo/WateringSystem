@@ -12,64 +12,26 @@
 #include "lib/LiquidCrystal_I2C.h"
 #include "WateringSystem.h"
 
-// CONSTANT  definitions
-// ---------------------------------------------------------------------------
-
-/*!
- * @defined
- * @abstract   IIC_ADDR_LCD
- * @discussion Address of LCD display on IIC channel
- */
-#define IIC_ADDR_LCD 0x3f
-
-/*!
- * @defined
- * @abstract   IIC_ADDR_RTC
- * @discussion Address of RTC module on IIC channel
- */
-#define IIC_ADDR_RTC 0x68
-
-/*!
- * @defined
- * @abstract   IIC_ADDR_EEPROM
- * @discussion Address of EEPROM datastore on IIC channel
- */
-#define IIC_ADDR_EEPROM 0x50
-
-/*!
- * @defined
- * @abstract   IIC_ADDR_RELAY
- * @discussion Address of relay block (MCP23017) on IIC channel
- */
-#define IIC_ADDR_RELAY 0x20
-
-/*!
- * @defined
- * @abstract   PUSH_BUTTON_PIN
- * @discussion For this pin connected the rotary encoders push button
- */
-#define PUSH_BUTTON_PIN 11
-
-/*!
- * @defined
- * @abstract   SCROLL_UP_PIN
- * @discussion For this pin connected the rotary encoders rotate first direction
- */
-#define SCROLL_UP_PIN 12
-
-/*!
- * @defined
- * @abstract   SCROLL_DOWN_PIN
- * @discussion For this pin connected the rotary encoders rotate other direction
- */
-#define SCROLL_DOWN_PIN 13
-
 // PUBLIC METHODS
 // ---------------------------------------------------------------------------
-void WateringSystem::WateringSystem(){
+WateringSystem::WateringSystem(){
 
 }
 
+WateringSystem::~WateringSystem(){
+
+}
+
+void WateringSystem::initManualSelector(){
+	pinMode(PUSH_BUTTON_PIN, INPUT);
+	digitalWrite(PUSH_BUTTON_PIN, HIGH);
+
+	pinMode(SCROLL_DOWN_PIN, INPUT);
+	digitalWrite(PUSH_BUTTON_PIN, HIGH);
+
+	pinMode(SCROLL_UP_PIN, INPUT);
+	digitalWrite(SCROLL_UP_PIN, HIGH);
+}
 
 void WateringSystem::setDate( uint8_t sec, uint8_t min, uint8_t hour, uint8_t dow, uint8_t dom, uint8_t month, uint8_t year ) {
 	Wire.beginTransmission(IIC_ADDR_RTC);
