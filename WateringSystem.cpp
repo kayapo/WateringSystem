@@ -15,11 +15,13 @@
 // PUBLIC METHODS
 // ---------------------------------------------------------------------------
 WateringSystem::WateringSystem(){
-
+	// Constructor ures fuggveny egyelore
+	// nincs ra szukseg, hogy barmit is csinaljon
+	Wire.begin();
 }
 
 WateringSystem::~WateringSystem(){
-
+	// Mint fentebb
 }
 
 void WateringSystem::initManualSelector(){
@@ -31,6 +33,12 @@ void WateringSystem::initManualSelector(){
 
 	pinMode(SCROLL_UP_PIN, INPUT);
 	digitalWrite(SCROLL_UP_PIN, HIGH);
+}
+
+int WateringSystem::getEvent( uint8_t *zone, uint8_t *event){
+	int ret = 0;
+
+	return ret;
 }
 
 void WateringSystem::setDate( uint8_t sec, uint8_t min, uint8_t hour, uint8_t dow, uint8_t dom, uint8_t month, uint8_t year ) {

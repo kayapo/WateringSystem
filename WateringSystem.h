@@ -18,66 +18,68 @@
 /*!
  * @defined
  * @abstract   IIC_ADDR_LCD
- * @discussion Address of LCD display on IIC channel
+ * @discussion Az LCD kijelzo cime az IIC csatornan
  */
 #define IIC_ADDR_LCD 0x3f
 
 /*!
  * @defined
  * @abstract   IIC_ADDR_RTC
- * @discussion Address of RTC module on IIC channel
+ * @discussion Az RTC modul cime az IIC csatornan
  */
 #define IIC_ADDR_RTC 0x68
 
 /*!
  * @defined
  * @abstract   IIC_ADDR_EEPROM
- * @discussion Address of EEPROM datastore on IIC channel
+ * @discussion Az EEPROM cime az IIC csatornan
  */
 #define IIC_ADDR_EEPROM 0x50
 
 /*!
  * @defined
  * @abstract   IIC_ADDR_RELAY
- * @discussion Address of relay block (MCP23017) on IIC channel
+ * @discussion A rele vezerlo (MCP23017) cime az IIC csatornan
  */
 #define IIC_ADDR_RELAY 0x20
 
 /*!
  * @defined
  * @abstract   PUSH_BUTTON_PIN
- * @discussion For this pin connected the rotary encoders push button
+ * @discussion Ehhez a labhoz csatlakozik a forgasjelado nyomogombja
  */
-#define PUSH_BUTTON_PIN 11
+#define PUSH_BUTTON_PIN 2
 
 /*!
  * @defined
  * @abstract   SCROLL_UP_PIN
- * @discussion For this pin connected the rotary encoders rotate first direction
+ * @discussion Ehhez a labhoz csatlakozik a forgasjelado egyik laba
  */
-#define SCROLL_UP_PIN 12
+#define SCROLL_UP_PIN 3
 
 /*!
  * @defined
  * @abstract   SCROLL_DOWN_PIN
- * @discussion For this pin connected the rotary encoders rotate other direction
+ * @discussion Ehhez a labhoz csatlakozik a forgas jelado masik laba
  */
-#define SCROLL_DOWN_PIN 13
+#define SCROLL_DOWN_PIN 4
 
 /*!
  * @defined
  * @abstract   MAIN_CYCLE_DELAY
- * @discussion Delay time, wait before next cycle in main loop
+ * @discussion A loop fuggvenyben ennyi idot kell varni a cilus vegen
  */
 #define MAIN_CYCLE_DELAY 250
 
 /*!
  * @defined
  * @abstract   EDIT_WAIT_CYCLE
- * @discussion At least as many cycles need to keep pressing the edit button to enter the setup
+ * @discussion A loop fuggvenyben ennyi ciklust kell varni miellot belepek a beallitasokba
  */
 #define EDIT_WAIT_CYCLE 12
 
+// A legfobb ciklus //////////////////////////////////////////////////////////
+//
 class WateringSystem
 {
 public:
@@ -94,6 +96,15 @@ public:
 
 	// Destructor
 	~WateringSystem();
+
+	/*!
+	 * @defined
+	 * @abstract
+	 * @discussion
+	 *
+	 * @param
+	 */
+	int getEvent(uint8_t *zone, uint8_t *event);
 
 	/*!
 	 * @defined
@@ -150,6 +161,15 @@ private:
 	 * @param
 	 */
 	uint8_t decToBcd( uint8_t dec );
-};
+
+	/*!
+	 * @defined
+	 * @abstract
+	 * @discussion
+	 *
+	 * @param
+	 */
+	int readFromEEPROM(uint16_t *start_addr, uint16_t *prog_len);
+}; // class WateringSystem
 
 #endif
