@@ -140,7 +140,7 @@ void setup(){
 	lcd.begin(16,2);
 
 	wSys.initManualSelector();
-	// setDate(0, 30, 20, 6, 8, 9, 43);
+	// wSys.setDate(0, 45, 11, 4, 12, 9, 43);
 	startSystem();
 	delay(1000);
 }

@@ -44,13 +44,13 @@ int WateringSystem::getEvent( uint8_t *zone, uint8_t *event){
 void WateringSystem::setDate( uint8_t sec, uint8_t min, uint8_t hour, uint8_t dow, uint8_t dom, uint8_t month, uint8_t year ) {
 	Wire.beginTransmission(IIC_ADDR_RTC);
 	Wire.write(0);
-	Wire.write(bcdToDec(sec));
-	Wire.write(bcdToDec(min));
-	Wire.write(bcdToDec(hour));
-	Wire.write(bcdToDec(dow));
-	Wire.write(bcdToDec(dom));
-	Wire.write(bcdToDec(month));
-	Wire.write(bcdToDec(year));
+	Wire.write(decToBcd(sec));
+	Wire.write(decToBcd(min));
+	Wire.write(decToBcd(hour));
+	Wire.write(decToBcd(dow));
+	Wire.write(decToBcd(dom));
+	Wire.write(decToBcd(month));
+	Wire.write(decToBcd(year));
 	Wire.write(0x10);
 	Wire.endTransmission();
 }
@@ -80,3 +80,38 @@ byte WateringSystem::bcdToDec(byte val){
 byte WateringSystem::decToBcd(byte val){
 	return ( (val/10*16) + (val%10) );
 }
+
+int WateringSystem::readFromEEPROM(int eeprom_addr, uint16_t *start, uint16_t *prog_len){
+	int ret = 0;
+	uint16_t progNum;
+	uint16_t progLen;
+
+	Wire.beginTransmission(IIC_ADDR_EEPROM);
+	Wire.write( (eeprom_addr >> 8) & 0xff );
+	Wire.write( (eeprom_addr >> 0) & 0xff );
+	Wire.endTransmission();
+
+	delay(5);
+	Wire.requestFrom(eeprom_addr, 1);
+	progNum = Wire.read();
+	if( progNum >= 240 ){
+		*start = progNum;
+		eeprom_addr++;
+
+		Wire.beginTransmission(IIC_ADDR_EEPROM);
+		Wire.write( (eeprom_addr >> 8) & 0xff );
+		Wire.write( (eeprom_addr >> 0) & 0xff );
+		Wire.endTransmission();
+
+		delay(5);
+
+		Wire.requestFrom(eeprom_addr, 1);
+		progLen = Wire.read();
+
+		*prog_len = progLen;
+		ret = 1;
+	}
+
+	return ret;
+}
+

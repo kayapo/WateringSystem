@@ -169,7 +169,7 @@ private:
 	 *
 	 * @param
 	 */
-	int readFromEEPROM(uint16_t *start_addr, uint16_t *prog_len);
+	int readFromEEPROM(int eeprom_addr, uint16_t *start_addr, uint16_t *prog_len);
 }; // class WateringSystem
 
 #endif
