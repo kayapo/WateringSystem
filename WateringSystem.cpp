@@ -24,6 +24,13 @@ WateringSystem::~WateringSystem(){
 	// Mint fentebb
 }
 
+void WateringSystem::resetZones(){
+	int c;
+	for(c = 0; c < 16; c++){
+			zoneStatus[c] = 0x00;
+	}
+}
+
 void WateringSystem::initManualSelector(){
 	pinMode(PUSH_BUTTON_PIN, INPUT);
 	digitalWrite(PUSH_BUTTON_PIN, HIGH);
@@ -35,8 +42,86 @@ void WateringSystem::initManualSelector(){
 	digitalWrite(SCROLL_UP_PIN, HIGH);
 }
 
-int WateringSystem::getEvent( uint8_t *zone, uint8_t *event){
+void WateringSystem::readProgram(int year, int month, int dom, int dow, int hour, int min, int sec){
+	// Egy program hossza: 9byte * 2fazis * 14lepes = 252byte
+	int PROGNUM = EEPROM_LENGTH / PROGRAM_LENGTH;
+	int prg_addr, pa, in_zone, in_year, in_month, in_dom, in_dow, in_hour, in_min, in_sec, in_state;
+
+	for( prg_addr = 0; prg_addr < EEPROM_LENGTH; prg_addr += PROGRAM_LENGTH){
+		triggerEEPROM(prg_addr);
+		Wire.requestFrom(IIC_ADDR_EEPROM, PROGRAM_LENGTH);
+
+		for( pa = 0; pa < 252; pa += 9){
+			if( Wire.available() )
+				in_zone = Wire.read();
+
+			if( Wire.available() )
+				in_year = Wire.read();
+
+			if( Wire.available() )
+				in_month = Wire.read();
+
+			if( Wire.available() )
+				in_dom = Wire.read();
+
+			if( Wire.available() )
+				in_dow = Wire.read();
+
+			if( Wire.available() )
+				in_hour = Wire.read();
+
+			if( Wire.available() )
+				in_min = Wire.read();
+
+			if( Wire.available() )
+				in_sec = Wire.read();
+
+			if( Wire.available() )
+				in_state = Wire.read();
+
+			if( year == 0 or in_year == year ){
+				if( month == 0 or in_month == month ){
+					if( dom == 0 or in_dom == dom ){
+						if( dow == 0 or in_dow == dow ){
+							if( hour == 0 or in_hour == hour ){
+								if( in_min == min and in_sec == sec ){
+									if( in_zone > 7 ){
+										// zoneStatus[0]
+										setZone( &zoneStatus[0], in_zone, in_state );
+									} else {
+										// zoneStatus[1]
+										setZone( &zoneStatus[1], (in_zone - 8), in_state );
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+void WateringSystem::setZone( uint8_t *zoneRef, uint8_t zoneNum, uint8_t state){
+	int zone_mask = (int) pow(2, zoneNum);
+	if( state ){
+		zoneRef |= zone_mask;
+	} else {
+		zoneRef &= zone_mask;
+	}
+}
+
+int WateringSystem::getZoneState(int zone, uint8_t *zoneState){
 	int ret = 0;
+	if( zone == 1 ){
+		ret = 1;
+		*zoneState = zoneStatus[0];
+	}
+
+	if( zone == 2 ){
+		ret = 1;
+		*zoneState = zoneStatus[1];
+	}
 
 	return ret;
 }
@@ -81,37 +166,9 @@ byte WateringSystem::decToBcd(byte val){
 	return ( (val/10*16) + (val%10) );
 }
 
-int WateringSystem::readFromEEPROM(int eeprom_addr, uint16_t *start, uint16_t *prog_len){
-	int ret = 0;
-	uint16_t progNum;
-	uint16_t progLen;
-
+void WateringSystem::triggerEEPROM( int eepromAddress ){
 	Wire.beginTransmission(IIC_ADDR_EEPROM);
-	Wire.write( (eeprom_addr >> 8) & 0xff );
-	Wire.write( (eeprom_addr >> 0) & 0xff );
+	Wire.write( (int) (eepromAddress >> 8) );
+	Wire.write( (int) (eepromAddress >> 0xff) );
 	Wire.endTransmission();
-
-	delay(5);
-	Wire.requestFrom(eeprom_addr, 1);
-	progNum = Wire.read();
-	if( progNum >= 240 ){
-		*start = progNum;
-		eeprom_addr++;
-
-		Wire.beginTransmission(IIC_ADDR_EEPROM);
-		Wire.write( (eeprom_addr >> 8) & 0xff );
-		Wire.write( (eeprom_addr >> 0) & 0xff );
-		Wire.endTransmission();
-
-		delay(5);
-
-		Wire.requestFrom(eeprom_addr, 1);
-		progLen = Wire.read();
-
-		*prog_len = progLen;
-		ret = 1;
-	}
-
-	return ret;
 }
-

@@ -23,7 +23,7 @@ void startSystem(){
 	lcd.home();
 	delay(100);
 
-	lcd.print("Watering System");
+	lcd.print(MSG_SYSTEM_NAME);
 	lcd.setCursor(0,1);
 	lcd.print(MSG_START);
 }
@@ -35,7 +35,7 @@ void displayClock(){
 	wSys.getDate( &sec, &min, &hour, &dow, &dom, &mon, &year );
 
 	lcd.home();
-	lcd.print("Watering System");
+	lcd.print(MSG_SYSTEM_NAME);
 
 	// A masodiksor elejere teszem a kurzort
 	lcd.setCursor(0,1);
@@ -54,7 +54,7 @@ void displayClock(){
 	lcd.print(min,DEC);
 
 	// Kettospont
-	lcd.print(":");
+	lcd.print(CLOCK_SEPARATOR);
 
 	// Kiirom a masodpercet
 	if( sec < 10 )
@@ -139,8 +139,14 @@ void setup(){
 	// Objektum letrehozatal
 	lcd.begin(16,2);
 
+	// Az ontozesi zonakat "Ki" allapotba kapcsolom
+	wSys.resetZones();
+
+	// A beallitogombot alaphelyzetbe allitom
 	wSys.initManualSelector();
+
 	// wSys.setDate(0, 45, 11, 4, 12, 9, 43);
+	// A rendszer inditasa
 	startSystem();
 	delay(1000);
 }

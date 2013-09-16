@@ -155,4 +155,11 @@
  */
 #define MSG_WATER_DETECTOR "Nedvesseg erz."
 
+/*!
+ * @defined
+ * @abstract   MSG_WATER_DETECTOR
+ * @discussion Water detector message
+ */
+#define MSG_SYSTEM_NAME "Ontozorendszer"
+
 #endif

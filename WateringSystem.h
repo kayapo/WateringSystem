@@ -78,18 +78,25 @@
  */
 #define EDIT_WAIT_CYCLE 12
 
+/*!
+ * @defined
+ * @abstract   EEPROM_LENGTH
+ * @discussion Az EEPROM hossza byteban
+ */
+#define EEPROM_LENGTH 32768
+
+/*!
+ * @defined
+ * @abstract   PROGRAM_LENGTH
+ * @discussion Egy program hossza byteban
+ */
+#define PROGRAM_LENGTH 252
+
 // A legfobb ciklus //////////////////////////////////////////////////////////
 //
 class WateringSystem
 {
 public:
-	/*!
-	 * @defined
-	 * @abstract
-	 * @discussion
-	 *
-	 * @param
-	 */
 
 	// Constructor without parameters
 	WateringSystem();
@@ -104,7 +111,29 @@ public:
 	 *
 	 * @param
 	 */
-	int getEvent(uint8_t *zone, uint8_t *event);
+	void resetZones();
+
+	/*!
+	 * @defined
+	 * @abstract
+	 * @discussion
+	 *
+	 * @param
+	 */
+	int getZoneState(int zone, uint8_t *zoneState);
+
+	/*!
+	 * @defined
+	 * @abstract
+	 * @discussion Felolvassa az osszes programot az EEPROM -bol es beallitja a relek allapotbitjeit
+	 * @discussion Egy program hossza: 9byte * 2fazis * 14lepes = 252byte
+	 * @discussion { [ zone (0xF0 - 0xFF) ][ year (0x00 = *) ][ month (0x00 = *) ]
+	 *             [ dom (0x00 = *) ][ dow (0x00 = *, 0x01 - 0x07) ][ hour (0x00 - 0x17) ][ min (0x00 - 0x3b) ][ sec (0x00 - 0x3b) ]
+	 *             [ eventType (0x00 = ki, >0x00 = be)]}{...}{...}...
+	 *
+	 * @param
+	 */
+	void readProgram(int year, int month, int dom, int dom, int hour, int min, int sec);
 
 	/*!
 	 * @defined
@@ -146,6 +175,13 @@ public:
 private:
 	/*!
 	 * @defined
+	 * @abstract   SCROLL_UP_PIN
+	 * @discussion Ehhez a labhoz csatlakozik a forgasjelado egyik laba
+	 */
+	uint8_t zoneStatus[2];
+
+	/*!
+	 * @defined
 	 * @abstract
 	 * @discussion
 	 *
@@ -169,7 +205,16 @@ private:
 	 *
 	 * @param
 	 */
-	int readFromEEPROM(int eeprom_addr, uint16_t *start_addr, uint16_t *prog_len);
+	void triggerEEPROM( int eepromAddress );
+
+	/*!
+	 * @defined
+	 * @abstract
+	 * @discussion
+	 *
+	 * @param
+	 */
+	void setZone(uint8_t *zoneRef, uint8_t zoneNum, uint8_t state);
 }; // class WateringSystem
 
 #endif
